@@ -9,8 +9,8 @@ from tqdm import tqdm
 from .utils import task
 
 
-class DeepSVDD:
-    def __init__(self, keras_model, input_shape=(28, 28, 1), objective='one-class',
+class AESVDD:
+    def __init__(self, keras_model, input_shape=(28, 28, 1), objective='hard',
                  nu=0.1, representation_dim=32, batch_size=128, lr=1e-3):
         self.represetation_dim = representation_dim
         self.objective = objective
@@ -23,12 +23,12 @@ class DeepSVDD:
 
         with task('Build graph'):
             self.x = tf.placeholder(tf.float32, [None] + list(input_shape))
-            print(self.x.shape)
+#             print(self.x.shape)
             self.latent_op = self.keras_model(self.x)
-            print(self.latent_op.shape)
+#             print(self.latent_op.shape)
             self.dist_op = tf.reduce_sum(tf.square(self.latent_op - self.c), axis=-1)
 
-            if self.objective == 'soft-boundary':
+            if self.objective == 'soft':
                 self.score_op = self.dist_op - self.R ** 2
                 penalty = tf.maximum(self.score_op, tf.zeros_like(self.score_op))
                 self.loss_op = self.R ** 2 + (1 / self.nu) * penalty
@@ -71,7 +71,7 @@ class DeepSVDD:
                 x_batch = x_train[i_batch * BS: (i_batch + 1) * BS]
                 results = self.sess.run(ops, feed_dict={self.x: x_batch})
 
-                if self.objective == 'soft-boundary' and i_epoch >= self.warm_up_n_epochs:
+                if self.objective == 'soft' and i_epoch >= self.warm_up_n_epochs:
                     self.sess.run(tf.assign(self.R, self._get_R(results['dist'], self.nu)))
 
             else:
@@ -93,6 +93,16 @@ class DeepSVDD:
             scores.append(s_batch)
 
         return np.concatenate(scores)
+
+    
+    def predict_label(self, X):
+        score = self.predict(X)
+        if self.objective == "hard":
+            score_temp = np.msort(score)
+            threshold = score_temp[score.size - (int)(score.size * self.nu)]
+            return np.where(score > threshold, -1, 1)
+        else:
+            return np.where(score > 0, -1, 1)
 
     def _init_c(self, X, eps=1e-1):
         N = X.shape[0]
