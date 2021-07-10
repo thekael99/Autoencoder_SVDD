@@ -23,12 +23,10 @@ class DeepSVDD:
 
         with task('Build graph'):
             self.x = tf.placeholder(tf.float32, [None] + list(input_shape))
-            print(self.x.shape)
             self.latent_op = self.keras_model(self.x)
-            print(self.latent_op.shape)
-            self.dist_op = tf.reduce_sum(tf.square(self.latent_op - self.c), axis=-1)
 
-            if self.objective == 'soft-boundary':
+            self.dist_op = tf.reduce_sum(tf.square(self.latent_op - self.c), axis=-1)
+            if self.objective == 'soft':
                 self.score_op = self.dist_op - self.R ** 2
                 penalty = tf.maximum(self.score_op, tf.zeros_like(self.score_op))
                 self.loss_op = self.R ** 2 + (1 / self.nu) * penalty
@@ -45,8 +43,8 @@ class DeepSVDD:
         self.sess = tf.Session(config=config)
         self.sess.run(tf.global_variables_initializer())
 
-    def __del__(self):
-        self.sess.close()
+    # def __del__(self):
+    #     self.sess.close()
 
     def fit(self, X, X_test, y_test, epochs=10, verbose=True):
         N = X.shape[0]
@@ -78,7 +76,7 @@ class DeepSVDD:
                 if verbose:
                     pred = self.predict(X_test)  # pred: large->fail small->pass
                     auc = roc_auc_score(y_test, -pred)  # y_test: 1->pass 0->fail
-                    print('\rEpoch: %3d AUROC: %.3f' % (i_epoch, auc))
+                    print('\rEpoch: %3d AUROC: %.3f' % (i_epoch + 1, auc))
 
     def predict(self, X):
         N = X.shape[0]
@@ -91,8 +89,13 @@ class DeepSVDD:
             x_batch = X[i_batch * BS: (i_batch + 1) * BS]
             s_batch = self.sess.run(self.score_op, feed_dict={self.x: x_batch})
             scores.append(s_batch)
-
         return np.concatenate(scores)
+    
+    def predict_label(self, X):
+        score = self.predict(X)
+        score_temp = np.msort(score)
+        threshold = score_temp[score.size - (int)(score.size * self.nu)]
+        return np.where(score > threshold, -1, 1)
 
     def _init_c(self, X, eps=1e-1):
         N = X.shape[0]

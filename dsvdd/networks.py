@@ -4,7 +4,7 @@ from tensorflow import keras
 __all__ = ['mnist_lenet', 'cifar_lenet']
 
 
-def mnist_lenet(H=32):
+def mnist_lenet(H=16):
     model = keras.models.Sequential()
 
     model.add(keras.layers.Conv2D(8, (5, 5), padding='same', use_bias=False, input_shape=(28, 28, 1)))

@@ -1,0 +1,20 @@
+[0m2021.06.19 21:57:23 INFO  Started: Metals version 0.10.4 in workspace 'D:\SourceTree\Autoencoder_SVDD' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.19 21:57:34 INFO  time: initialize in 11s[0m
+[0m2021.06.19 21:57:35 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.19 21:57:35 WARN  no build tool detected in workspace 'D:\SourceTree\Autoencoder_SVDD'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.26 06:24:35 INFO  Started: Metals version 0.10.4 in workspace 'D:\SourceTree\Autoencoder_SVDD' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.26 06:24:41 INFO  time: initialize in 6.34s[0m
+[0m2021.06.26 06:24:41 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.26 06:24:41 WARN  no build tool detected in workspace 'D:\SourceTree\Autoencoder_SVDD'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.06.27 08:33:40 INFO  Started: Metals version 0.10.4 in workspace 'D:\SourceTree\Autoencoder_SVDD' for client Visual Studio Code 1.57.1.[0m
+[0m2021.06.27 08:33:49 INFO  time: initialize in 9.13s[0m
+[0m2021.06.27 08:33:49 WARN  Build server is not auto-connectable.[0m
+[0m2021.06.27 08:33:49 WARN  no build tool detected in workspace 'D:\SourceTree\Autoencoder_SVDD'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.07.03 10:20:36 INFO  Started: Metals version 0.10.4 in workspace 'D:\SourceTree\Autoencoder_SVDD' for client Visual Studio Code 1.57.1.[0m
+[0m2021.07.03 10:20:42 INFO  time: initialize in 6.48s[0m
+[0m2021.07.03 10:20:43 WARN  Build server is not auto-connectable.[0m
+[0m2021.07.03 10:20:43 WARN  no build tool detected in workspace 'D:\SourceTree\Autoencoder_SVDD'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.07.07 19:30:41 INFO  Started: Metals version 0.10.4 in workspace 'D:\SourceTree\Autoencoder_SVDD' for client Visual Studio Code 1.57.1.[0m
+[0m2021.07.07 19:30:53 INFO  time: initialize in 11s[0m
+[0m2021.07.07 19:30:54 WARN  Build server is not auto-connectable.[0m
+[0m2021.07.07 19:30:54 WARN  no build tool detected in workspace 'D:\SourceTree\Autoencoder_SVDD'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
