@@ -1,3 +1,3 @@
-from .networks import *
+from .autoencoder import *
 from .datasets import *
-from .deepSVDD import DeepSVDD
+from .model import AESVDD

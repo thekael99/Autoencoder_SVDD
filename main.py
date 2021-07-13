@@ -1,6 +1,8 @@
+from aesvdd import datasets
+from aesvdd import model
+from aesvdd import autoencoder
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-from dsvdd import *
 import matplotlib.pyplot as plt
 import os
 
@@ -10,14 +12,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 
 
 def main(cls=1):
-    # tf.reset_default_graph()
-    from dsvdd.utils import plot_most_normal_and_abnormal_images
+    tf.reset_default_graph()
+    # from aesvdd.utils import plot_most_normal_and_abnormal_images
     # build model and DeepSVDD
-    keras_model = mnist_lenet(32)
-    svdd = DeepSVDD(keras_model, input_shape=(28, 28, 1), representation_dim=32, objective='hard')
+    keras_model = autoencoder.mnist_lenet(32)
+    svdd = model.AESVDD(keras_model, input_shape=(28, 28, 1), representation_dim=32, objective='hard')
 
     # get dataset
-    X_train, X_test, y_test = get_mnist(cls)
+    X_train, X_test, y_test = datasets.get_mnist(cls)
     # X_train, X_test, y_test = get_cifar10(cls)
     print(X_train.shape)
 
@@ -29,9 +31,5 @@ def main(cls=1):
     auc = roc_auc_score(y_test, -score)
     print('AUROC: %.3f' % auc)
 
-    plot_most_normal_and_abnormal_images(X_test, score)
-    plt.show()
-
-
 if __name__ == '__main__':
-    main()
+    main(1)
