@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
 
@@ -37,7 +38,7 @@ def get_cifar10(cls=1):
     return x_train, x_test, y_test
 
 
-def get_paysim(train_ratio=0.7):
+def get_paysim():
     df = pd.read_csv('./data/PS_20174392719_1491204439457_log.csv')
     df = pd.concat([df, pd.get_dummies(df['type'], prefix='type_')], axis=1)
     df['hour'] = df['step'] % 24
@@ -69,5 +70,5 @@ def get_paysim(train_ratio=0.7):
     y = y.reshape(-1,)
     y = np.where(y == 1, -1, 1)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_ratio)
-    return X_train, X_test, y_train, y_test
+    # X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_ratio)
+    return X, y

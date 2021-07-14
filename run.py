@@ -12,7 +12,7 @@ tf.disable_v2_behavior()
 import warnings
 warnings.filterwarnings("ignore")
 
-from aesvdd import networks
+from aesvdd import autoencoder, networks
 from aesvdd import AESVDD
 from aesvdd import datasets
 
@@ -47,11 +47,11 @@ nu = float(sys.argv[6])
 lr = float(sys.argv[7])
 verbose = bool(sys.argv[7])
 
-if dataset
-X_train, X_test, y_train, y_test = datasets.get_paysim(train_ratio=0.7)
+if dataset == "PAYSIM":
+    X_train, X_test, y_train, y_test = datasets.get_paysim(train_ratio=0.7)
 
 tf.reset_default_graph()
-AE_model = networks.Vanilla_AE(H=5)
+AE_model = autoencoder.Vanilla_AE(H=5)
 
 #pre_train_AE (not required)
 if epoch_pretrain > 0:
