@@ -2,6 +2,10 @@ import numpy as np
 import pandas as pd
 from tensorflow import keras
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import Normalizer
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import LabelEncoder
 
 __all__ = ['get_mnist', 'get_cifar10']
 
@@ -70,5 +74,4 @@ def get_paysim():
     y = y.reshape(-1,)
     y = np.where(y == 1, -1, 1)
 
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=train_ratio)
     return X, y

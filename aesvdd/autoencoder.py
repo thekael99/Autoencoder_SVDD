@@ -63,7 +63,7 @@ def VAE(z_dim=5):
     x_encoded1 = Dense(8, activation='relu', use_bias=False)(x)
     # x_encoded2 = Dense(6, activation='relu', use_bias=False)(x_encoded1)
 
-    mu = Dense(z_dim, name='code_layer')(x_encoded1)
+    mu = Dense(z_dim, activation='relu', name='code_layer')(x_encoded1)
     log_var = Dense(z_dim)(x_encoded1)
 
     # sampling function
@@ -84,7 +84,7 @@ def VAE(z_dim=5):
     y = y_decoder(z_decoded)
 
     #loss
-    reconstruction_loss = BinaryCrossentropy()(x, y) * 9
+    reconstruction_loss = BinaryCrossentropy(from_logits=True)(x, y) * 9
     kl_loss = 0.5 * K.sum(K.square(mu) + K.exp(log_var) - log_var - 1, axis=-1)
     vae_loss = reconstruction_loss + kl_loss
     
