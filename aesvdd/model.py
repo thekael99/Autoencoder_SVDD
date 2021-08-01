@@ -142,12 +142,6 @@ class AESVDD:
             R = self.sess.run(self.R)
             R.tofile(path + "_R") 
 
-    def _load_c(self, c):
-        self.sess.run(tf.assign(self.c, c))
-    
-    def _load_encoder(self, encoder):
-        self.keras_model = encoder
-        self.latent_op = self.keras_model(self.x)
 
 
 class HARD:
@@ -171,8 +165,7 @@ class HARD:
 
     def predict_label(self, X):
         score = self.predict(X)
-        score_temp = np.msort(score)
-        threshold = score_temp[score.size - (int)(score.size * self.nu)]
+        threshold = np.quantile(score, 1 - self.nu, interpolation="nearest")
         return np.where(score > threshold, -1, 1)
     
     def evalute(self, X_test, y_test):
