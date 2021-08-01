@@ -1,12 +1,13 @@
+from .utils import task
+from tqdm import tqdm
+from tensorflow import keras
+from sklearn.metrics import roc_auc_score
+from math import ceil
+import numpy as np
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
-import numpy as np
-from math import ceil
-from sklearn.metrics import roc_auc_score
-from tensorflow import keras
-from tqdm import tqdm
+import tensorflow.compat.v1.keras.backend as K
 
-from .utils import task
 
 
 class AESVDD:
@@ -43,6 +44,7 @@ class AESVDD:
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
         self.sess = tf.Session(config=config)
+        K.set_session(self.sess)
         self.sess.run(tf.global_variables_initializer())
 
     def __del__(self):
@@ -94,7 +96,6 @@ class AESVDD:
 
         return np.concatenate(scores)
 
-    
     def predict_label(self, X):
         score = self.predict(X)
         if self.objective == "hard":
@@ -124,6 +125,50 @@ class AESVDD:
             c[(abs(c) < eps) & (c > 0)] = eps
 
         self.sess.run(tf.assign(self.c, c))
+        self.c_np = c 
 
     def _get_R(self, dist, nu):
         return np.quantile(np.sqrt(dist), 1 - nu)
+
+    def save_model(self, model_name):
+        path = "./checkpoints/" + model_name 
+        self.keras_model.save(path + "_encoder.h5")
+        self.c_np.tofile(path + "_c")
+
+    def _load_c(self, c):
+        self.sess.run(tf.assign(self.c, c))
+    
+    def _load_encoder(self, encoder):
+        self.keras_model = encoder
+        self.latent_op = self.keras_model(self.x)
+
+
+class HARD:
+    def __init__(self, encoder, c, nu = 0.05):
+        self.encoder = encoder
+        self.c = c
+        self.nu = nu
+    
+    def predict(self, X, batch_size = 128):
+        N = X.shape[0]
+        BS = batch_size
+        BN = int(ceil(N / BS))
+        scores = list()
+
+        for i_batch in range(BN):
+            x_batch = X[i_batch * BS: (i_batch + 1) * BS]
+            s_batch = np.sum(np.square(self.encoder.predict(x_batch)-self.c), axis=1)
+            scores.append(s_batch)
+
+        return np.concatenate(scores) 
+
+    def predict_label(self, X):
+        score = self.predict(X)
+        score_temp = np.msort(score)
+        threshold = score_temp[score.size - (int)(score.size * self.nu)]
+        return np.where(score > threshold, -1, 1)
+    
+    def evalute(self, X_test, y_test):
+        pred = self.predict(X_test)
+        auc = roc_auc_score(y_test, -pred)
+        return auc

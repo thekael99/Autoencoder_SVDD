@@ -54,6 +54,7 @@ def Vanilla_AE(H=5):
     model.add(Dense(H, activation='relu', use_bias=False, name='code_layer'))
     model.add(Dense(6, activation='relu', use_bias=False))
     model.add(Dense(9, activation='tanh', use_bias=False))
+    model.compile(optimizer='adam', loss='mse')
     return model
 
 
