@@ -99,8 +99,7 @@ class AESVDD:
     def predict_label(self, X):
         score = self.predict(X)
         if self.objective == "hard":
-            score_temp = np.msort(score)
-            threshold = score_temp[score.size - (int)(score.size * self.nu)]
+            threshold = np.quantile(score, 1 - self.nu, interpolation="nearest")
             return np.where(score > threshold, -1, 1)
         else:
             return np.where(score > 0, -1, 1)
@@ -124,16 +123,24 @@ class AESVDD:
             c[(abs(c) < eps) & (c < 0)] = -eps
             c[(abs(c) < eps) & (c > 0)] = eps
 
-        self.sess.run(tf.assign(self.c, c))
-        self.c_np = c 
+        self.sess.run(tf.assign(self.c, c)) 
 
     def _get_R(self, dist, nu):
         return np.quantile(np.sqrt(dist), 1 - nu)
 
+    def evalute(self, X_test, y_test):
+        pred = self.predict(X_test)
+        auc = roc_auc_score(y_test, -pred)
+        return auc
+
     def save_model(self, model_name):
         path = "./checkpoints/" + model_name 
         self.keras_model.save(path + "_encoder.h5")
-        self.c_np.tofile(path + "_c")
+        c = self.sess.run(self.c)
+        c.tofile(path + "_c")
+        if self.objective != "hard":
+            R = self.sess.run(self.R)
+            R.tofile(path + "_R") 
 
     def _load_c(self, c):
         self.sess.run(tf.assign(self.c, c))
@@ -158,6 +165,37 @@ class HARD:
         for i_batch in range(BN):
             x_batch = X[i_batch * BS: (i_batch + 1) * BS]
             s_batch = np.sum(np.square(self.encoder.predict(x_batch)-self.c), axis=1)
+            scores.append(s_batch)
+
+        return np.concatenate(scores) 
+
+    def predict_label(self, X):
+        score = self.predict(X)
+        score_temp = np.msort(score)
+        threshold = score_temp[score.size - (int)(score.size * self.nu)]
+        return np.where(score > threshold, -1, 1)
+    
+    def evalute(self, X_test, y_test):
+        pred = self.predict(X_test)
+        auc = roc_auc_score(y_test, -pred)
+        return auc
+
+
+class SOFT:
+    def __init__(self, encoder, c, R):
+        self.encoder = encoder
+        self.c = c
+        self.R = R
+    
+    def predict(self, X, batch_size = 128):
+        N = X.shape[0]
+        BS = batch_size
+        BN = int(ceil(N / BS))
+        scores = list()
+
+        for i_batch in range(BN):
+            x_batch = X[i_batch * BS: (i_batch + 1) * BS]
+            s_batch = np.sum(np.square(self.encoder.predict(x_batch)-self.c), axis=1) - self.R**2
             scores.append(s_batch)
 
         return np.concatenate(scores) 
