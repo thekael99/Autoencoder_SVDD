@@ -77,12 +77,12 @@ def plot_most_normal_and_abnormal_images(X_test, score):
     fig.set_size_inches((5, 5))
     inds = np.argsort(score)
 
-    image1 = merge_image(X_test[inds[:10]], (2, 5))
+    image1 = merge_image(X_test[inds[:20]], (2, 10))
     axes[0].imshow(np.squeeze(image1))
     axes[0].set_title('Most normal images')
     axes[0].set_axis_off()
 
-    image2 = merge_image(X_test[inds[-10:]], (2, 5))
+    image2 = merge_image(X_test[inds[-20:]], (2, 10))
     axes[1].imshow(np.squeeze(image2))
     axes[1].set_title('Most abnormal images')
     axes[1].set_axis_off()
