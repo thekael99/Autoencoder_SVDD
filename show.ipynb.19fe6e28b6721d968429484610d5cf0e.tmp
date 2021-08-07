@@ -1,3 +1,0 @@
-from sklearn.decomposition import PCA
-X_map_2D = PCA(n_components=2).fit_transform(X_train_map)
-X_map_2D = PCA(n_components=2).fit_transform(X_train_map)
