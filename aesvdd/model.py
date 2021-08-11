@@ -164,9 +164,10 @@ class HARD:
 
     def predict_label(self, X):
         score = self.predict(X)
-        score_temp = np.msort(score)
-        threshold = score_temp[score.size - (int)(score.size * self.nu)]
-        return np.where(score > threshold, -1, 1)
+        # score_temp = np.msort(score)
+        # threshold = score_temp[score.size - (int)(score.size * self.nu)]
+        # print('threshold', threshold)
+        return np.where(score > 0.1, -1, 1)
     
     def evalute(self, X_test, y_test):
         pred = self.predict(X_test)
